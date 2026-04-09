@@ -67,4 +67,16 @@ Este é o exemplo máximo de "Dividir para Conquistar".
 | Função | O que faz? | Exemplo |
 | :--- | :--- | :--- |
 | `zip` | Une duas listas em pares. | `zip [1,2] ["a","b"]` -> `[(1,"a"), (2,"b")]` |
-| `concat` | Trans
+| `concat` | Transforma lista de listas em lista simples. | `concat [[1],[2,3]]` -> `[1,2,3]` |
+| `replicate` | Cria uma lista repetindo um valor. | `replicate 3 5` -> `[5,5,5]` |
+| `splitAt` | Corta uma lista em uma posição específica. | `splitAt 2 [1,2,3,4]` -> `([1,2], [3,4])` |
+| `mod` | Retorna o resto da divisão. | `10 mod 3` -> `1` |
+
+---
+
+## 7. Dicas para não se perder
+1.  **Sempre olhe o Tipo:** `Int -> Int` significa que entra um inteiro e sai um inteiro.
+2.  **Desenhe no papel:** Se a função for recursiva, tente fazer o caminho com uma lista de 2 ou 3 elementos.
+3.  **Use o GHCI:** Teste pedaços pequenos do código no terminal para ver se a lógica de uma linha está funcionando antes de montar a função inteira.
+
+---
