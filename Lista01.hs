@@ -1,71 +1,69 @@
-import Text.XHtml (base, abbr)
 import Data.List (group)
 import Data.Char (isDigit)
 
--- I
+-- I: Quantos Iguais
 quantosIguais :: Int -> Int -> Int -> Int
 quantosIguais a b c
     | a == b && b == c = 3
     | a == b || a == c || b == c = 2
     | otherwise = 0
 
--- II
+-- II: Maiores que a média
 quantosMaioresQueMedia :: Float -> Float -> Float -> Int
-quantosMaioresQueMedia a b c =
+quantosMaioresQueMedia a b c = 
     let media = (a + b + c) / 3
-        conteA = if a > media then 1 else 0
-        conteB = if b > media then 1 else 0
-        conteC = if c > media then 1 else 0
-    in conteA + conteB + conteC
+    in length [x | x <- [a, b, c], x > media]
 
--- III
+-- III e IV: Potências
 potencia_2 :: Int -> Int
 potencia_2 x = x * x
 
--- IV
 potencia_4 :: Int -> Int
 potencia_4 x = potencia_2 (potencia_2 x)
 
--- V
+-- V: XOR (Ou exclusivo)
 xor :: Bool -> Bool -> Bool
-xor a b = (a || b) && not (a && b)
+xor a b = a /= b
 
--- VI
-xMaior :: Float -> Float -> Float -> Float
-xMaior a b c = (-b + sqrt (b*b - 4*a*c)) / (2*a)
+-- VI: Bhaskara
+x_maior :: Float -> Float -> Float -> Float
+x_maior a b c = ((-b) + delta) / (2 * a)
+    where delta = sqrt (b*b - 4*a*c)
 
-xMenor :: Float -> Float -> Float -> Float
-xMenor a b c = (-b - sqrt (b*b - 4*a*c)) / (2*a)
+x_menor :: Float -> Float -> Float -> Float
+x_menor a b c = ((-b) - delta) / (2 * a)
+    where delta = sqrt (b*b - 4*a*c)
 
--- VII
+-- VII: Somas
 somaInclui :: Int -> Int -> Int
 somaInclui n1 n2 = sum [n1..n2]
 
 somaExclui :: Int -> Int -> Int
-somaExclui n1 n2 = sum [(n1 + 1) .. (n2 - 1)]
+somaExclui n1 n2 = sum [n1 + 1 .. n2 - 1]
 
--- VIII
+-- VIII: Múltiplos
 multiplosNoIntervalo :: Int -> Int -> Int -> [Int]
 multiplosNoIntervalo n1 n2 n3 = [x | x <- [n1..n2], x `mod` n3 == 0]
 
--- IX
+-- IX: Multiplicar sem *
 multiplicar :: Int -> Int -> Int
 multiplicar a b
-    | b >= 0 = sum (replicate b a)
-    | otherwise = - sum (replicate (-b) a)
+    | b == 0    = 0
+    | b > 0     = sum (replicate b a)
+    | otherwise = negate (sum (replicate (abs b) a))
 
--- X
+-- X: Modulo manual
 mod2 :: Int -> Int -> Int
 mod2 a b
-  | a < b     = a
-  | otherwise = mod2 (a - b) b
+    | a < b     = a
+    | otherwise = mod2 (a - b) b
 
--- XI
+-- XI: Sequência de Raízes
 seqA :: Int -> Double
 seqA 1 = sqrt 6
 seqA n = sqrt (6 + seqA (n - 1))
 
--- XII
+-- XII: Fatorial e Combinação
 fatorial :: Int -> Int
 fatorial 0 = 1
 fatorial n = n * fatorial (n - 1)
@@ -73,86 +71,60 @@ fatorial n = n * fatorial (n - 1)
 combinar :: Int -> Int -> Int
 combinar m n = fatorial m `div` (fatorial n * fatorial (m - n))
 
--- XIII
+-- XIII: Maior e seu Índice
 maiorP :: [Int] -> (Int, Int)
-maiorP [] = error "Lista vazia!"
-maiorP (x:xs) = aux xs x 0 1
-  where
-    aux [] maior pMaior _ = (maior, pMaior)
-    aux (y:ys) maior pMaior pAtual
-      | y > maior = aux ys y pAtual (pAtual + 1)
-      | otherwise = aux ys maior pMaior (pAtual + 1)
+maiorP [] = error "Lista vazia"
+maiorP xs = foldl1 (\(m, pm) (x, px) -> if x > m then (x, px) else (m, pm)) (zip xs [0..])
 
--- XIV
+-- XIV: Tradução de dígitos
 dic_10 :: [(Int, String)]
-dic_10 =
-    [(0, "Zero"), (1, "Um"), (2, "Dois"),
-    (3, "Tres"), (4, "Quatro"), (5, "Cinco"),
-    (6, "Seis"), (7, "Sete"), (8, "Oito"), (9, "Nove")]
-
-busca :: Int -> [(Int, String)] -> String
-busca _ [] = error "Numero nao encontrado"
-busca n ((k,v):xs)
-  | n == k    = v
-  | otherwise = busca n xs
+dic_10 = [(0, "zero"), (1, "um"), (2, "dois"), (3, "tres"), (4, "quatro"), 
+          (5, "cinco"), (6, "seis"), (7, "sete"), (8, "oito"), (9, "nove")]
 
 traduz :: [Int] -> [String]
-traduz [] = []
-traduz xs = map (`busca` dic_10) xs
+traduz xs = [v | x <- xs, (k, v) <- dic_10, x == k]
 
--- XV
+-- XV: Deletar posição N
 delPosicaoN :: [Int] -> Int -> [Int]
-delPosicaoN [] _ = []
-delPosicaoN (x:xs) n
-  | n < 0     = x:xs
-  | n == 0    = xs
-  | otherwise = x : delPosicaoN xs (n - 1)
+delPosicaoN xs n = take n xs ++ drop (n + 1) xs
 
--- XVI
+-- XVI: Inserir na posição X
 inserirPosicaoX :: [Int] -> Int -> Int -> [Int]
-inserirPosicaoX xs n x
-  | n <= 0    = x : xs
-inserirPosicaoX [] _ x = [x]
-inserirPosicaoX (y:ys) n x = y : inserirPosicaoX ys (n - 1) x
+inserirPosicaoX xs n elemento = take n xs ++ [elemento] ++ drop n xs
 
--- XVII
+-- XVII: Elemento na posição N
 elementoNaPosicao :: [a] -> Int -> a
-elementoNaPosicao [] _ = error "Lista menor do que a posição desejada"
+elementoNaPosicao [] _ = error "Index out of bounds"
 elementoNaPosicao (x:xs) n
-  | n < 0     = error "Posição inválida"
-  | n == 0    = x
-  | otherwise = elementoNaPosicao xs (n - 1)
+    | n == 0    = x
+    | otherwise = elementoNaPosicao xs (n - 1)
 
--- XVIII
+-- XVIII: Merge (Fusão de listas ordenadas)
 merge :: [Int] -> [Int] -> [Int]
 merge [] ys = ys
 merge xs [] = xs
 merge (x:xs) (y:ys)
-  | x <= y    = x : merge xs (y:ys)
-  | otherwise = y : merge (x:xs) ys
+    | x <= y    = x : merge xs (y:ys)
+    | otherwise = y : merge (x:xs) ys
 
--- XIX
+-- XIX: Interseção
 intersecao :: [Int] -> [Int] -> [Int]
-intersecao [] _ = []
-intersecao (x:xs) ys
-  | x `elem` ys = x : intersecao xs ys
-  | otherwise   = intersecao xs ys
+intersecao xs ys = [x | x <- xs, x `elem` ys]
 
--- XX
-comprimiGrupo :: String -> String
-comprimiGrupo s
-  | length s > 3 = "!" ++ show (length s) ++ [head s]
-  | otherwise    = s
-
+-- XX: Comprimir
 comprime :: String -> String
-comprime s = concatMap comprimiGrupo (group s)
+comprime s = concatMap format (group s)
+  where
+    format g | length g > 3 = "!" ++ show (length g) ++ [head g]
+             | otherwise    = g
 
--- XXI
+-- XXI: Descomprimir
 descomprime :: String -> String
 descomprime [] = []
 descomprime ('!':xs) = 
-  let (numStr, rest) = span isDigit xs
-      n = read numStr :: Int
-      (c:resto) = rest
-  in replicate n c ++ descomprime resto
+    let numStr = takeWhile isDigit xs
+        resto  = dropWhile isDigit xs
+        n      = read numStr
+        char   = head resto
+    in replicate n char ++ descomprime (tail resto)
 descomprime (x:xs) = x : descomprime xs
