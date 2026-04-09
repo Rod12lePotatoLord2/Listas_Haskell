@@ -1,6 +1,6 @@
 # 📘 Guia de Estudos: Haskell Passo a Passo
 
-Este guia foi criado para explicar de forma "mastigada" os conceitos aplicados nas listas de exercícios de Haskell, focando na transição do pensamento iniciante para a lógica funcional.
+Este guia foi criado para explicar os conceitos aplicados nas listas de exercícios de Haskell, focando na transição do pensamento iniciante para a lógica funcional.
 
 ---
 
