@@ -6,20 +6,22 @@ impares xs = ordenar (filter odd xs)
 
 ordenar :: [Int] -> [Int]
 ordenar [] = []
-ordenar (x:xs) =
-    ordenar (filter (< x) xs) ++ [x] ++ ordenar (filter (>=x) xs)
+ordenar (x:xs) = ordenar (filter (< x) xs) ++ [x] ++ ordenar (filter (>= x) xs)
 
 -- 2. Enésima posição em lista
 posicao :: Int -> [a] -> a
-posicao n lista = head (foldl combinador [] lista)
+posicao n lista = snd (foldl combinador (-1, error "Indice fora dos limites") lista)
   where
-    combinador acc x
-      | length acc <= n = x : acc
-      | otherwise       = acc
+    combinador (idx, atual) x
+      | idx + 1 == n = (idx + 1, x)
+      | otherwise    = (idx + 1, atual)
 
 -- 3. Repetição de valor em formato de Lista (Sem Replicate)
-repetir :: Int -> [[Int]]
-repetir n = map (\x -> take x (repeat x)) [n, n-1 .. 1]
+repeteLista :: Int -> [[Int]]
+repeteLista n = map (\x -> take x (repeat x)) [n, n-1 .. 1]
+ 
+repetePlano :: Int -> [Int]
+repetePlano n = concat (repeteLista n)
 
 -- 4. Verificar Palíndromo
 verificarPalindromo :: Eq a => [a] -> Bool
@@ -33,24 +35,27 @@ fib n = take n fibs
 
 -- 6. Definindo Funções
 -- a) All
-al1 :: (a -> Bool) -> [a] -> Bool
-al1 _ []     = True
-al1 p (x:xs) = p x && al1 p xs
+myAll :: (a -> Bool) -> [a] -> Bool
+myAll _ []     = True
+myAll p (x:xs) = p x && myAll p xs
+
 -- b) Any
-any2 :: (a -> Bool) -> [a] -> Bool
-any2 _ []     = False
-any2 p (x:xs) = p x || any2 p xs
+myAny :: (a -> Bool) -> [a] -> Bool
+myAny _ []     = False
+myAny p (x:xs) = p x || myAny p xs
+
 -- c) TakeWhile
-takeWh1le :: (a -> Bool) -> [a] -> [a]
-takeWh1le _ []     = []
-takeWh1le p (x:xs)
-  | p x       = x : takeWh1le p xs
+myTakeWhile :: (a -> Bool) -> [a] -> [a]
+myTakeWhile _ []     = []
+myTakeWhile p (x:xs)
+  | p x       = x : myTakeWhile p xs
   | otherwise = []
+
 -- d) DropWhile
-dropWh1le :: (a -> Bool) -> [a] -> [a]
-dropWh1le _ []     = []
-dropWh1le p (x:xs)
-  | p x       = dropWh1le p xs
+myDropWhile :: (a -> Bool) -> [a] -> [a]
+myDropWhile _ []     = []
+myDropWhile p (x:xs)
+  | p x       = myDropWhile p xs
   | otherwise = x:xs
 
 -- 7. Map e Filter com Foldr
@@ -63,3 +68,27 @@ filtro p = foldr (\x acc -> if p x then x : acc else acc) []
 -- 8. Foldl para conversão de inteiros
 dec2int :: [Int] -> Int
 dec2int = foldl (\acc x -> acc * 10 + x) 0
+
+-- 9. Redefinir map e iterate usando unfold 
+unfold :: (a -> Bool) -> (a -> b) -> (a -> a) -> a -> [b]
+unfold p h t x
+  | p x       = []
+  | otherwise = h x : unfold p h t (t x)
+
+mapUnfold :: (a -> b) -> [a] -> [b]
+mapUnfold f = unfold null (f . head) tail
+
+iterateUnfold :: (a -> a) -> a -> [a]
+iterateUnfold = unfold (const False) id
+
+-- 10. Função altMap 
+altMap :: (a -> b) -> (a -> b) -> [a] -> [b]
+altMap _ _ []       = []
+altMap f g (x:xs)   = f x : altMap g f xs
+
+-- 11. Funções curry e uncurry
+myCurry :: ((a, b) -> c) -> a -> b -> c
+myCurry f x y = f (x, y)
+
+myUncurry :: (a -> b -> c) -> (a, b) -> c
+myUncurry f (x, y) = f x y
